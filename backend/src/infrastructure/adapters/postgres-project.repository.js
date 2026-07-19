@@ -1,12 +1,12 @@
 /**
  * @file postgres-project.repository.js
- * @description Adaptador de persistencia PostgreSQL que implementa ProjectRepositoryPort.
+ * @description Adaptador de persistencia PostgreSQL que implementa ProjectRepositoryPort con soporte para SSL y cadenas de conexión dinámicas (Heroku).
  * @author Gerardo Paiva G.
  * @date 18-07-2026
  * 
  * HISTORIAL DE CAMBIOS:
  * Version | Fecha      | Autor            | Descripción
- * V1.0.0  | 18-07-2026 | Gerardo Paiva G. | Implementación de las operaciones CRUD con inicialización automática de tablas.
+ * V1.1.0  | 18-07-2026 | Gerardo Paiva G. | Soporte para cadena de conexión DATABASE_URL y forzado de SSL para compatibilidad con Heroku Postgres.
  */
 
 const { Pool } = require('pg');
@@ -18,17 +18,30 @@ const Project = require('../../domain/project.entity');
  */
 class PostgresProjectRepository extends ProjectRepositoryPort {
     /**
-     * Inicializa el pool de conexiones de pg.
+     * Inicializa el pool de conexiones de pg leyendo cadenas de conexión de producción.
      */
     constructor() {
         super();
-        this.pool = new Pool({
-            user: process.env.DB_USER || 'admin',
-            host: process.env.DB_HOST || 'localhost',
-            database: process.env.DB_NAME || 'stackupia_db',
-            password: process.env.DB_PASSWORD || 'admin_secure_pwd_123',
-            port: parseInt(process.env.DB_PORT || '5434', 10)
-        });
+        const connectionString = process.env.DATABASE_URL;
+
+        if (connectionString) {
+            /* Configuración adaptada para Heroku Postgres (requiere SSL activo) */
+            this.pool = new Pool({
+                connectionString,
+                ssl: {
+                    rejectUnauthorized: false
+                }
+            });
+        } else {
+            /* Configuración local de desarrollo */
+            this.pool = new Pool({
+                user: process.env.DB_USER || 'admin',
+                host: process.env.DB_HOST || 'localhost',
+                database: process.env.DB_NAME || 'stackupia_db',
+                password: process.env.DB_PASSWORD || 'admin_secure_pwd_123',
+                port: parseInt(process.env.DB_PORT || '5434', 10)
+            });
+        }
     }
 
     /**

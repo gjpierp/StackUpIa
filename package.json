@@ -1,0 +1,17 @@
+{
+  "name": "stackupia",
+  "version": "1.0.0",
+  "description": "Stackupia Freelance Software Agency Portal",
+  "main": "backend/src/infrastructure/entrypoints/server.js",
+  "scripts": {
+    "start": "node backend/src/infrastructure/entrypoints/server.js",
+    "test": "echo \"Error: no test specified\" && exit 0"
+  },
+  "dependencies": {
+    "express": "4.19.2",
+    "pg": "8.11.5",
+    "dotenv": "16.4.5"
+  },
+  "author": "Gerardo Paiva G.",
+  "license": "ISC"
+}
