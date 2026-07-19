@@ -180,7 +180,128 @@
         </div>
     </section>
 
+    <!-- Demos Laboratory Section -->
+    <section id="demos-lab" class="demos-section">
+        <div class="container">
+            <div class="section-header">
+                <h2 class="section-title">Laboratorio de Ingeniería: Demos Interactivos</h2>
+                <p class="section-subtitle">Experimenta en vivo con las herramientas exclusivas desarrolladas por Stackupia.</p>
+            </div>
 
+            <div class="demos-workspace glassmorphic">
+                <div class="demos-tabs">
+                    <button class="tab-btn active" data-tab="tab-nmerge">nmerge</button>
+                    <button class="tab-btn" data-tab="tab-extractor">extractor</button>
+                    <button class="tab-btn" data-tab="tab-sentinel">sentinel-ngac</button>
+                </div>
+
+                <div class="tab-content active" id="tab-nmerge">
+                    <div class="demo-grid">
+                        <div class="demo-description">
+                            <h3>nmerge v1.0.0</h3>
+                            <p>Combina flujos y diccionarios de configuración en JSON resolviendo colisiones críticas con estrategias predefinidas.</p>
+                            <div class="form-group" style="margin-top: 15px;">
+                                <label for="nmerge-strategy">Estrategia de Resolución</label>
+                                <select id="nmerge-strategy" class="form-input">
+                                    <option value="overwrite">Sobrescribir (Origen B prima sobre A)</option>
+                                    <option value="keep-both">Mantener Ambos (Genera arrays en colisiones)</option>
+                                </select>
+                            </div>
+                            <button id="btn-run-nmerge" class="btn btn-primary btn-block" style="margin-top: 15px;">Combinar Fuentes JSON</button>
+                        </div>
+                        <div class="demo-interactive">
+                            <div class="json-panels">
+                                <div class="json-panel">
+                                    <span class="panel-label">Fuente A (JSON)</span>
+                                    <textarea id="nmerge-json-a" class="form-input font-mono" style="min-height: 120px; font-size: 0.8rem;">{
+  "appName": "stackupia-core",
+  "version": "1.0.0",
+  "port": 3000
+}</textarea>
+                                </div>
+                                <div class="json-panel" style="margin-top: 10px;">
+                                    <span class="panel-label">Fuente B (JSON)</span>
+                                    <textarea id="nmerge-json-b" class="form-input font-mono" style="min-height: 120px; font-size: 0.8rem;">{
+  "port": 8080,
+  "env": "production"
+}</textarea>
+                                </div>
+                            </div>
+                            <div class="json-output-container" style="margin-top: 15px;">
+                                <span class="panel-label">Resultado Consolidado</span>
+                                <div id="nmerge-output" class="architecture-code font-mono" style="min-height: 120px;">// Haz clic en "Combinar Fuentes JSON"</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="tab-content" id="tab-extractor">
+                    <div class="demo-grid">
+                        <div class="demo-description">
+                            <h3>extractor v1.2.4</h3>
+                            <p>Analizador automatizado de logs de servidor y auditorías forenses. Localiza y extrae entidades e IPs críticas.</p>
+                            <button id="btn-run-extractor" class="btn btn-primary btn-block" style="margin-top: 20px;">Analizar y Extraer Logs</button>
+                        </div>
+                        <div class="demo-interactive">
+                            <div class="form-group">
+                                <label for="extractor-input-logs">Logs en Bruto del Servidor</label>
+                                <textarea id="extractor-input-logs" class="form-input font-mono" style="min-height: 150px; font-size: 0.8rem;">[2026-07-19T15:00:22Z] INFO [192.168.1.105] Solicitud de acceso usuario admin@stackupia.com.
+[2026-07-19T15:00:45Z] WARN [10.0.0.42] Intento de inyección SQL detectado en modulo.
+[2026-07-19T15:01:10Z] ERR [172.16.254.1] Fuga de memoria en el socket Postgres ssl_verify=failed.
+[2026-07-19T15:02:00Z] SUCCESS [192.168.1.105] Autenticación completada para dev-team@stackupia.com.</textarea>
+                            </div>
+                            <div class="json-output-container" style="margin-top: 15px;">
+                                <span class="panel-label">Entidades Estructuradas Encontradas</span>
+                                <div id="extractor-output" class="architecture-code font-mono" style="min-height: 120px;">// Haz clic en "Analizar y Extraer Logs"</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="tab-content" id="tab-sentinel">
+                    <div class="demo-grid">
+                        <div class="demo-description">
+                            <h3>sentinel-ngac v2.1.0</h3>
+                            <p>Motor de Control de Acceso de Próxima Generación (NGAC/ABAC). Evalúa dinámicamente si las acciones sobre los dominios y componentes del stack en <strong>stackupia.com</strong> cumplen la política.</p>
+                            
+                            <div class="form-group" style="margin-top: 15px;">
+                                <label for="sentinel-subject">Sujeto (Rol)</label>
+                                <select id="sentinel-subject" class="form-input">
+                                    <option value="admin">Administrador del Sistema</option>
+                                    <option value="developer">Desarrollador Junior</option>
+                                    <option value="guest">Invitado Externo</option>
+                                </select>
+                            </div>
+
+                            <div class="form-group" style="margin-top: 15px;">
+                                <label for="sentinel-action">Acción</label>
+                                <select id="sentinel-action" class="form-input">
+                                    <option value="read">Lectura de Logs (read)</option>
+                                    <option value="deploy">Desplegar Contenedor (deploy)</option>
+                                    <option value="delete">Destruir / Modificar BD (delete)</option>
+                                </select>
+                            </div>
+
+                            <div class="form-group" style="margin-top: 15px;">
+                                <label for="sentinel-resource">Recurso (Dominio Detectado)</label>
+                                <select id="sentinel-resource" class="form-input">
+                                    <!-- Cargado dinámicamente en app.js -->
+                                </select>
+                            </div>
+
+                            <button id="btn-run-sentinel" class="btn btn-primary btn-block" style="margin-top: 20px;">Evaluar Decisión con Sentinel</button>
+                        </div>
+                        <div class="demo-interactive">
+                            <span class="panel-label">Terminal de Control de Acceso NGAC</span>
+                            <div class="terminal-body font-mono" id="sentinel-terminal" style="min-height: 280px; background: #020203; border: 1px solid var(--border-color); border-radius: 8px;">
+                                <p class="terminal-line text-muted">[SENTINEL RESTING] Esperando parámetros para evaluar política...</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
 
     <!-- Client Project Tracker Section -->
     <section id="tracker" class="tracker-section">

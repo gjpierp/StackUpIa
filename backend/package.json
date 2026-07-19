@@ -4,7 +4,8 @@
   "description": "Backend API hexagonal para Stackupia Freelance Software Agency.",
   "main": "src/infrastructure/entrypoints/server.js",
   "scripts": {
-    "start": "node src/infrastructure/entrypoints/server.js"
+    "start": "node src/infrastructure/entrypoints/server.js",
+    "test": "node tests/run-tests.js"
   },
   "dependencies": {
     "express": "4.19.2",

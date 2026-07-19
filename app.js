@@ -264,4 +264,209 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         });
     }
+
+
+    // ----------------------------------------------------
+    // 5. Interactive Demos & Tabs Controller
+    // ----------------------------------------------------
+    
+    // Tabs switcher
+    const tabButtons = document.querySelectorAll('.tab-btn');
+    const tabContents = document.querySelectorAll('.tab-content');
+
+    tabButtons.forEach(btn => {
+        btn.addEventListener('click', () => {
+            tabButtons.forEach(b => b.classList.remove('active'));
+            tabContents.forEach(c => c.classList.remove('active'));
+
+            btn.classList.add('active');
+            const targetContent = document.getElementById(btn.getAttribute('data-tab'));
+            if (targetContent) {
+                targetContent.classList.add('active');
+            }
+        });
+    });
+
+    // nmerge interactive controller
+    const btnRunNmerge = document.getElementById('btn-run-nmerge');
+    const nmergeJsonA = document.getElementById('nmerge-json-a');
+    const nmergeJsonB = document.getElementById('nmerge-json-b');
+    const nmergeOutput = document.getElementById('nmerge-output');
+    const nmergeStrategy = document.getElementById('nmerge-strategy');
+
+    if (btnRunNmerge && nmergeJsonA && nmergeJsonB && nmergeOutput) {
+        btnRunNmerge.addEventListener('click', () => {
+            try {
+                const a = JSON.parse(nmergeJsonA.value);
+                const b = JSON.parse(nmergeJsonB.value);
+                const strategy = nmergeStrategy.value;
+
+                let result = {};
+
+                if (strategy === 'overwrite') {
+                    result = { ...a, ...b };
+                } else if (strategy === 'keep-both') {
+                    const keys = new Set([...Object.keys(a), ...Object.keys(b)]);
+                    keys.forEach(key => {
+                        if (key in a && key in b) {
+                            if (a[key] === b[key]) {
+                                result[key] = a[key];
+                            } else {
+                                result[key] = [a[key], b[key]];
+                            }
+                        } else if (key in a) {
+                            result[key] = a[key];
+                        } else {
+                            result[key] = b[key];
+                        }
+                    });
+                }
+
+                nmergeOutput.textContent = JSON.stringify(result, null, 2);
+                nmergeOutput.style.color = '#00ffcc';
+            } catch (err) {
+                nmergeOutput.textContent = `// Error de Sintaxis JSON:\n${err.message}`;
+                nmergeOutput.style.color = 'var(--color-error)';
+            }
+        });
+    }
+
+    // extractor interactive controller
+    const btnRunExtractor = document.getElementById('btn-run-extractor');
+    const extractorInputLogs = document.getElementById('extractor-input-logs');
+    const extractorOutput = document.getElementById('extractor-output');
+
+    if (btnRunExtractor && extractorInputLogs && extractorOutput) {
+        btnRunExtractor.addEventListener('click', () => {
+            const logsText = extractorInputLogs.value;
+            
+            // Regex patterns
+            const ipRegex = /\b\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}\b/g;
+            const emailRegex = /[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}/g;
+            const statusRegex = /(INFO|WARN|ERR|SUCCESS)/g;
+
+            const ips = logsText.match(ipRegex) || [];
+            const emails = logsText.match(emailRegex) || [];
+            const statuses = logsText.match(statusRegex) || [];
+
+            const uniqueIps = [...new Set(ips)];
+            const uniqueEmails = [...new Set(emails)];
+
+            const result = {
+                metadata: {
+                    totalLinesAnalyzed: logsText.split('\n').filter(Boolean).length,
+                    timestamp: new Date().toISOString()
+                },
+                extractedEntities: {
+                    ipAddresses: uniqueIps,
+                    emailAddresses: uniqueEmails
+                },
+                severitySummary: {
+                    info: statuses.filter(s => s === 'INFO').length,
+                    warnings: statuses.filter(s => s === 'WARN').length,
+                    errors: statuses.filter(s => s === 'ERR').length,
+                    successes: statuses.filter(s => s === 'SUCCESS').length
+                }
+            };
+
+            extractorOutput.textContent = JSON.stringify(result, null, 2);
+            extractorOutput.style.color = '#00ffcc';
+        });
+    }
+
+    // sentinel-ngac dynamic resource synchronization
+    const sentinelResource = document.getElementById('sentinel-resource');
+    const btnRunSentinel = document.getElementById('btn-run-sentinel');
+    const sentinelTerminal = document.getElementById('sentinel-terminal');
+
+    function syncSentinelResources() {
+        if (!sentinelResource) return;
+
+        const platform = platformSelect.value;
+        const frontend = frontendSelect.value;
+        const backend = backendSelect.value;
+        const database = databaseSelect.value;
+
+        // Generate domains based on choices using stackupia.com
+        const domains = [];
+        domains.push(`https://${platform}.stackupia.com`);
+        domains.push(`https://${frontend}.stackupia.com`);
+        domains.push(`https://${backend}.stackupia.com`);
+        domains.push(`https://${database}.stackupia.com`);
+
+        const uniqueDomains = [...new Set(domains)];
+
+        sentinelResource.innerHTML = '';
+        uniqueDomains.forEach(domain => {
+            const opt = document.createElement('option');
+            opt.value = domain;
+            opt.textContent = domain;
+            sentinelResource.appendChild(opt);
+        });
+    }
+
+    // Add change listeners to builder controls to update Sentinel dropdown
+    [platformSelect, frontendSelect, backendSelect, databaseSelect].forEach(element => {
+        if (element) {
+            element.addEventListener('change', syncSentinelResources);
+        }
+    });
+
+    // Run once at start to populate Sentinel dropdown
+    syncSentinelResources();
+
+    if (btnRunSentinel && sentinelTerminal) {
+        btnRunSentinel.addEventListener('click', () => {
+            const subject = document.getElementById('sentinel-subject').value;
+            const action = document.getElementById('sentinel-action').value;
+            const resource = sentinelResource.value;
+
+            sentinelTerminal.innerHTML = `<p class="terminal-line text-accent">&gt; Iniciando evaluación de política ABAC con Sentinel NGAC Engine...</p>`;
+
+            setTimeout(() => {
+                let decision = 'DENY';
+                let reason = 'Ninguna regla de política explícita permite esta operación.';
+                let lineClass = 'text-error';
+
+                // Simple ABAC Rule Evaluation Engine
+                if (subject === 'admin') {
+                    decision = 'ALLOW';
+                    reason = 'El rol Admin tiene permisos globales de superusuario.';
+                    lineClass = 'text-success';
+                } else if (subject === 'developer') {
+                    if (action === 'read') {
+                        decision = 'ALLOW';
+                        reason = 'El rol Developer está autorizado a leer logs corporativos de stackupia.com.';
+                        lineClass = 'text-success';
+                    } else if (action === 'deploy') {
+                        // Allow deploying frontends/backends, but not raw postgres/mixed databases directly
+                        if (!resource.includes('postgresql') && !resource.includes('mixed')) {
+                            decision = 'ALLOW';
+                            reason = 'El rol Developer está autorizado a desplegar microservicios y código de aplicación.';
+                            lineClass = 'text-success';
+                        } else {
+                            decision = 'DENY';
+                            reason = 'Despliegues en bases de datos de producción están restringidos al rol Admin.';
+                        }
+                    } else if (action === 'delete') {
+                        decision = 'DENY';
+                        reason = 'Acciones destructivas (delete) están bloqueadas para desarrolladores.';
+                    }
+                } else if (subject === 'guest') {
+                    decision = 'DENY';
+                    reason = 'Los invitados externos tienen denegados todos los accesos operacionales a stackupia.com.';
+                }
+
+                sentinelTerminal.innerHTML = `
+                    <p class="terminal-line text-muted">[INFO] Sujeto: ${subject}</p>
+                    <p class="terminal-line text-muted">[INFO] Acción: ${action}</p>
+                    <p class="terminal-line text-muted">[INFO] Recurso: ${resource}</p>
+                    <p class="terminal-line text-accent">&gt; Evaluando atributos contextuales...</p>
+                    <p class="terminal-line ${lineClass}">&gt;&gt;&gt; DECISIÓN: ${decision}</p>
+                    <p class="terminal-line text-muted">[RAZÓN] ${reason}</p>
+                    <p class="terminal-line text-accent">&gt; Auditoría append-only registrada en la base de datos.</p>
+                `;
+            }, 800);
+        });
+    }
 });
