@@ -2,8 +2,8 @@
 
 Hoja de ruta del proyecto Stackupia, dividida en fases secuenciales que aseguran el cumplimiento del Stage-Gate Workflow.
 
-## Estado del Proyecto: `[█████████░] 90%`
-- **Fase Actual:** Fase 5: SRE y Resiliencia 🟡 (En Progreso)
+## Estado del Proyecto: `[██████████] 100%`
+- **Fase Actual:** Fase 5 y 6: SRE y Cloud Native 🟢 (Completado)
 
 ---
 
@@ -36,6 +36,6 @@ Hoja de ruta del proyecto Stackupia, dividida en fases secuenciales que aseguran
 - [x] Configuración del pipeline de Integración Continua (CI/CD) simulado o automatizado.
 - [x] Análisis de seguridad estática (SAST) y corrección de mojibakes/fugas.
 
-### 🔴 Fase 5: SRE y Resiliencia
+### 🟢 Fase 5: SRE y Resiliencia
 - [x] Configuración de Prometheus para el monitoreo de las señales doradas. (Nota: ya pre-cargado desde plantillas en infra Docker).
-- [ ] Simulación de inyección de caos y fallas de red/BD para validar el comportamiento tolerante a fallos.
+- [x] Simulación de inyección de caos y fallas de red/BD para validar el comportamiento tolerante a fallos.

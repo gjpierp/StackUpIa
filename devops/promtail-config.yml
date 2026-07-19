@@ -1,0 +1,42 @@
+# =====================================================================
+# @file promtail-config.yml
+# @description Configuración de recolección de logs de contenedores para Promtail.
+# @author Gerardo Paiva G.
+# @date 18-07-2026
+# 
+# HISTORIAL DE CAMBIOS:
+# Version | Fecha      | Autor            | Descripción
+# V1.0.0  | 18-07-2026 | Gerardo Paiva G. | Configuración inicial para recolectar logs de Nginx y enviarlos a Loki.
+# =====================================================================
+
+server:
+  http_listen_port: 9080
+  grpc_listen_port: 0
+
+positions:
+  filename: /tmp/positions.yaml
+
+clients:
+  - url: http://loki:3100/loki/api/v1/push
+
+scrape_configs:
+  - job_name: nginx-json-logs
+    static_configs:
+      - targets:
+          - localhost
+        labels:
+          job: nginx-gateway
+          __path__: /var/log/nginx/access_json.log
+
+    pipeline_stages:
+      - json:
+          expressions:
+            time_local: time_local
+            remote_addr: remote_addr
+            request: request
+            status: status
+            body_bytes_sent: body_bytes_sent
+            request_time: request_time
+      - labels:
+          status:
+          remote_addr:

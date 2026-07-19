@@ -1,0 +1,40 @@
+# =====================================================================
+# @file alert_rules.yml
+# @description Reglas de alerta Prometheus (SLA) para señales doradas de Stackupia.
+# @author Gerardo Paiva G.
+# @date 18-07-2026
+# 
+# HISTORIAL DE CAMBIOS:
+# Version | Fecha      | Autor            | Descripción
+# V1.0.0  | 18-07-2026 | Gerardo Paiva G. | Reglas iniciales para latencias, errores 5xx y saturación de CPU.
+# =====================================================================
+
+groups:
+  - name: SRE_Golden_Signals_Alerts
+    rules:
+      - alert: HighLatencyP95
+        expr: histogram_quantile(0.95, sum(rate(http_request_duration_seconds_bucket[5m])) by (le)) > 0.5
+        for: 1m
+        labels:
+          severity: critical
+        annotations:
+          summary: "Latencia del percentil 95 elevada"
+          description: "La latencia del 95% de las llamadas HTTP supera 500ms durante el último minuto."
+
+      - alert: HighErrorRate
+        expr: sum(rate(http_requests_total{status=~"5.."}[5m])) / sum(rate(http_requests_total[5m])) * 100 > 2.0
+        for: 2m
+        labels:
+          severity: critical
+        annotations:
+          summary: "Tasa de errores HTTP 5xx superior al 2%"
+          description: "Los errores de servidor superan el umbral tolerable del 2% en los últimos 2 minutos."
+
+      - alert: ProcessCpuSaturation
+        expr: process_cpu_seconds_total > 0.85
+        for: 2m
+        labels:
+          severity: critical
+        annotations:
+          summary: "Saturación de CPU superior al 85%"
+          description: "El contenedor está consumiendo más del 85% de las cuotas asignadas de CPU."

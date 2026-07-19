@@ -1,12 +1,12 @@
 # =====================================================================
 # @file docker-compose.yml
-# @description Configuración de contenedores Docker para base de datos, caché, backend API y proxy inverso Nginx.
+# @description Configuración de contenedores Docker incluyendo Prometheus para monitoreo de métricas.
 # @author Gerardo Paiva G.
 # @date 18-07-2026
 # 
 # HISTORIAL DE CAMBIOS:
 # Version | Fecha      | Autor            | Descripción
-# V1.1.0  | 18-07-2026 | Gerardo Paiva G. | Adición del servicio backend Node.js y vinculación de red con el proxy Nginx.
+# V1.2.0  | 18-07-2026 | Gerardo Paiva G. | Integración del servicio Prometheus para la telemetría SRE.
 # =====================================================================
 
 version: '3.8'
@@ -94,6 +94,17 @@ services:
     depends_on:
       - database
       - cache
+      - backend
+
+  prometheus:
+    image: prom/prometheus:v2.48.0
+    container_name: stackupia-prometheus
+    volumes:
+      - ./sre/prometheus.yml:/etc/prometheus/prometheus.yml:ro
+      - ./sre/alert_rules.yml:/etc/prometheus/alert_rules.yml:ro
+    ports:
+      - "9090:9090"
+    depends_on:
       - backend
 
 volumes:
