@@ -1,12 +1,12 @@
 # =====================================================================
 # @file docker-compose.yml
-# @description Configuración de contenedores Docker para base de datos, caché y servidor web local con mapeos de puertos libres.
+# @description Configuración de contenedores Docker para base de datos, caché, backend API y proxy inverso Nginx.
 # @author Gerardo Paiva G.
 # @date 18-07-2026
 # 
 # HISTORIAL DE CAMBIOS:
 # Version | Fecha      | Autor            | Descripción
-# V1.0.3  | 18-07-2026 | Gerardo Paiva G. | Re-asignación de puerto Nginx web a 8081 por colisión.
+# V1.1.0  | 18-07-2026 | Gerardo Paiva G. | Adición del servicio backend Node.js y vinculación de red con el proxy Nginx.
 # =====================================================================
 
 version: '3.8'
@@ -62,6 +62,25 @@ services:
       timeout: 5s
       retries: 5
 
+  backend:
+    image: node:22.14-alpine
+    container_name: stackupia-backend-api
+    working_dir: /usr/src/app
+    volumes:
+      - ./backend:/usr/src/app
+    command: sh -c "npm install && node src/infrastructure/entrypoints/server.js"
+    environment:
+      - PORT=3000
+      - DB_HOST=database
+      - DB_USER=admin
+      - DB_PASSWORD=admin_secure_pwd_123
+      - DB_NAME=stackupia_db
+      - DB_PORT=5432
+    ports:
+      - "3000:3000"
+    depends_on:
+      - database
+
   web:
     image: nginx:1.25-alpine
     container_name: stackupia-web
@@ -75,6 +94,7 @@ services:
     depends_on:
       - database
       - cache
+      - backend
 
 volumes:
   pg_data:

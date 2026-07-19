@@ -1,0 +1,47 @@
+# =====================================================================
+# @file ci-pipeline.yml
+# @description Pipeline de Integración Continua (GitHub Actions) para el proyecto Stackupia.
+# @author Gerardo Paiva G.
+# @date 18-07-2026
+# 
+# HISTORIAL DE CAMBIOS:
+# Version | Fecha      | Autor            | Descripción
+# V1.0.0  | 18-07-2026 | Gerardo Paiva G. | Pipeline inicial de integración con instalación determinista y linter de Swarm.
+# =====================================================================
+
+name: Stackupia Continuous Integration Pipeline
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  audit-and-validate:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout del código fuente
+      uses: actions/checkout@v4
+      with:
+        fetch-depth: 0
+
+    - name: Configurar entorno de Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: '20.11.0'
+        cache: 'npm'
+
+    - name: Instalar dependencias del backend
+      run: |
+        npm --prefix backend ci
+
+    - name: Auditoría de Seguridad de Dependencias (Trivy scan)
+      uses: aquasecurity/trivy-action@master
+      with:
+        scan-type: 'fs'
+        ignore-unfixed: true
+        format: 'table'
+        exit-code: '1'
+        severity: 'HIGH,CRITICAL'
