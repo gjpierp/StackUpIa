@@ -91,49 +91,50 @@ document.addEventListener('DOMContentLoaded', () => {
     // 2. SRE Live SLA Monitor (API Real Telemetry with simulator fallback)
     // ----------------------------------------------------
     const liveChart = document.getElementById('live-chart');
-    const maxBars = 25;
-    const latencies = Array.from({ length: maxBars }, () => Math.floor(Math.random() * 20) + 10);
+    if (liveChart) {
+        const maxBars = 25;
+        const latencies = Array.from({ length: maxBars }, () => Math.floor(Math.random() * 20) + 10);
 
-    function renderChart() {
-        if (!liveChart) return;
-        liveChart.innerHTML = '';
-        latencies.forEach(lat => {
-            const bar = document.createElement('div');
-            bar.className = 'chart-bar';
-            bar.style.height = `${Math.min(lat * 2, 110)}px`;
-            bar.setAttribute('title', `${lat}ms`);
-            liveChart.appendChild(bar);
-        });
-    }
+        function renderChart() {
+            liveChart.innerHTML = '';
+            latencies.forEach(lat => {
+                const bar = document.createElement('div');
+                bar.className = 'chart-bar';
+                bar.style.height = `${Math.min(lat * 2, 110)}px`;
+                bar.setAttribute('title', `${lat}ms`);
+                liveChart.appendChild(bar);
+            });
+        }
 
-    async function updateSreMetrics() {
-        try {
-            const response = await fetch(`${API_URL}/sre/metrics`);
-            if (response.ok) {
-                const metrics = await response.json();
-                document.querySelector('.uptime-percentage').textContent = `${metrics.uptime}%`;
-                // Add new real latency value to graph
-                latencies.shift();
-                latencies.push(metrics.averageLatencyMs + Math.floor(Math.random() * 8));
-                renderChart();
-            } else {
+        async function updateSreMetrics() {
+            try {
+                const response = await fetch(`${API_URL}/sre/metrics`);
+                const uptimeEl = document.querySelector('.uptime-percentage');
+                if (response.ok && uptimeEl) {
+                    const metrics = await response.json();
+                    uptimeEl.textContent = `${metrics.uptime}%`;
+                    latencies.shift();
+                    latencies.push(metrics.averageLatencyMs + Math.floor(Math.random() * 8));
+                    renderChart();
+                } else {
+                    simulateLatencyFallback();
+                }
+            } catch (err) {
                 simulateLatencyFallback();
             }
-        } catch (err) {
-            simulateLatencyFallback();
         }
-    }
 
-    function simulateLatencyFallback() {
-        latencies.shift();
-        const spikeChance = Math.random() > 0.9;
-        const newLatency = spikeChance ? Math.floor(Math.random() * 40) + 40 : Math.floor(Math.random() * 15) + 10;
-        latencies.push(newLatency);
+        function simulateLatencyFallback() {
+            latencies.shift();
+            const spikeChance = Math.random() > 0.9;
+            const newLatency = spikeChance ? Math.floor(Math.random() * 40) + 40 : Math.floor(Math.random() * 15) + 10;
+            latencies.push(newLatency);
+            renderChart();
+        }
+
         renderChart();
+        setInterval(updateSreMetrics, 2500);
     }
-
-    renderChart();
-    setInterval(updateSreMetrics, 2500);
 
 
     // ----------------------------------------------------

@@ -36,7 +36,6 @@
             <nav class="nav-menu">
                 <a href="#servicios" class="nav-link">Servicios</a>
                 <a href="#builder" class="nav-link">Constructor de Stack</a>
-                <a href="#monitor" class="nav-link">Estado de SLAs</a>
                 <a href="#tracker" class="nav-link">Seguimiento</a>
                 <a href="#contacto" class="btn btn-primary btn-sm">Evaluar Proyecto</a>
             </nav>
@@ -180,71 +179,7 @@
         </div>
     </section>
 
-    <!-- SRE Health & SLA Monitor Section -->
-    <section id="monitor" class="monitor-section">
-        <div class="container">
-            <div class="section-header">
-                <h2 class="section-title">Estado de SLAs y Salud de Ingeniería</h2>
-                <p class="section-subtitle">Simulador de métricas en tiempo real de los servicios web desplegados por Stackupia.</p>
-            </div>
 
-            <div class="monitor-grid">
-                <div class="monitor-card glassmorphic">
-                    <h4>Disponibilidad Global (Uptime)</h4>
-                    <div class="uptime-bar-container">
-                        <div class="uptime-percentage">99.998%</div>
-                        <div class="uptime-bars">
-                            <span class="bar success"></span>
-                            <span class="bar success"></span>
-                            <span class="bar success"></span>
-                            <span class="bar success"></span>
-                            <span class="bar success"></span>
-                            <span class="bar success"></span>
-                            <span class="bar success"></span>
-                            <span class="bar success"></span>
-                            <span class="bar success"></span>
-                            <span class="bar success"></span>
-                            <span class="bar success"></span>
-                            <span class="bar success"></span>
-                            <span class="bar success"></span>
-                            <span class="bar success"></span>
-                            <span class="bar success"></span>
-                        </div>
-                    </div>
-                    <p class="monitor-desc">Monitoreo continuo de latencia de Gateway y redundancia multi-región activa.</p>
-                </div>
-
-                <div class="monitor-card glassmorphic">
-                    <h4>Métricas de Calidad de Código</h4>
-                    <div class="gauge-container">
-                        <div class="gauge-box">
-                            <div class="gauge-value text-gradient">98%</div>
-                            <div class="gauge-title">Cobertura TDD</div>
-                        </div>
-                        <div class="gauge-box">
-                            <div class="gauge-value text-gradient">A+</div>
-                            <div class="gauge-title">Calidad de Código</div>
-                        </div>
-                    </div>
-                    <p class="monitor-desc">Restricción de complejidad ciclomática estricta y auditorías SAST (Trivy) integradas en CI/CD.</p>
-                </div>
-
-                <div class="monitor-card glassmorphic wide-card">
-                    <h4>Latencia de API Gateways (Tiempo Real)</h4>
-                    <div class="chart-container">
-                        <div id="live-chart" class="live-chart-visualization">
-                            <!-- Dynamically generated bars via JS -->
-                        </div>
-                        <div class="chart-labels">
-                            <span>Ahora</span>
-                            <span>P99: 45ms</span>
-                            <span>Promedio: 18ms</span>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
 
     <!-- Client Project Tracker Section -->
     <section id="tracker" class="tracker-section">
