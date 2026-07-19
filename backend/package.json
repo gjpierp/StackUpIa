@@ -1,0 +1,16 @@
+{
+  "name": "stackupia-backend",
+  "version": "1.0.0",
+  "description": "Backend API hexagonal para Stackupia Freelance Software Agency.",
+  "main": "src/infrastructure/entrypoints/server.js",
+  "scripts": {
+    "start": "node src/infrastructure/entrypoints/server.js"
+  },
+  "dependencies": {
+    "express": "4.19.2",
+    "pg": "8.11.5",
+    "dotenv": "16.4.5"
+  },
+  "author": "Gerardo Paiva G.",
+  "license": "ISC"
+}

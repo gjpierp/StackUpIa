@@ -1,0 +1,351 @@
+<!--
+/**
+ * @file index.html
+ * @description Landing page principal y portal interactivo para Stackupia Freelance Software Agency.
+ * @author Gerardo Paiva G.
+ * @date 18-07-2026
+ * 
+ * HISTORIAL DE CAMBIOS:
+ * Version | Fecha      | Autor            | Descripción
+ * V1.0.0  | 18-07-2026 | Gerardo Paiva G. | Creación del frontend con secciones de portafolio, Stack Builder, SLA Monitor, Project Tracker y formularios de contacto.
+ */
+-->
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Stackupia | Freelance Software Engineering & Solutions</title>
+    <meta name="description" content="Stackupia es una consultora y empresa freelance de desarrollo de software premium. Diseñamos, construimos y desplegamos soluciones robustas con arquitectura hexagonal, TDD y Docker.">
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body class="dark-theme">
+
+    <!-- Header / Navigation -->
+    <header class="main-header glassmorphic">
+        <div class="container header-container">
+            <a href="#" class="logo-link">
+                <span class="logo-accent">&lt;</span>Stackupia<span class="logo-accent">.com /&gt;</span>
+            </a>
+            <nav class="nav-menu">
+                <a href="#servicios" class="nav-link">Servicios</a>
+                <a href="#builder" class="nav-link">Constructor de Stack</a>
+                <a href="#monitor" class="nav-link">Estado de SLAs</a>
+                <a href="#tracker" class="nav-link">Seguimiento</a>
+                <a href="#contacto" class="btn btn-primary btn-sm">Evaluar Proyecto</a>
+            </nav>
+        </div>
+    </header>
+
+    <!-- Hero Section -->
+    <section class="hero-section">
+        <div class="hero-glow-1"></div>
+        <div class="hero-glow-2"></div>
+        <div class="container hero-container">
+            <h1 class="hero-title animate-fade-in">
+                Ingeniería de Software <br>
+                <span class="text-gradient">Sin Compromisos.</span>
+            </h1>
+            <p class="hero-subtitle animate-fade-in-delayed">
+                Desarrollo freelance especializado en arquitecturas robustas, microservicios, seguridad perimetral y soluciones cloud-native de alto rendimiento.
+            </p>
+            <div class="hero-actions animate-fade-in-delayed-more">
+                <a href="#builder" class="btn btn-primary btn-lg">Diseñar mi Stack</a>
+                <a href="#contacto" class="btn btn-secondary btn-lg">Evaluar Solución</a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Services Section -->
+    <section id="servicios" class="services-section">
+        <div class="container">
+            <div class="section-header">
+                <h2 class="section-title">Soluciones Tecnológicas Premium</h2>
+                <p class="section-subtitle">Construimos software con estándares de calidad corporativos e infraestructura moderna.</p>
+            </div>
+            <div class="services-grid">
+                <div class="service-card glassmorphic">
+                    <div class="service-icon">📐</div>
+                    <h3>Arquitectura Hexagonal</h3>
+                    <p>Separación estricta de responsabilidades, lógica de negocio inmune a cambios tecnológicos externos y alta mantenibilidad.</p>
+                </div>
+                <div class="service-card glassmorphic">
+                    <div class="service-icon">🧪</div>
+                    <h3>Desarrollo TDD</h3>
+                    <p>Desarrollo Guiado por Pruebas (Test-Driven Development) garantizando un arnés de seguridad robusto y cero regresiones en producción.</p>
+                </div>
+                <div class="service-card glassmorphic">
+                    <div class="service-icon">🛡️</div>
+                    <h3>Proxy e Inmunidad</h3>
+                    <p>Seguridad perimetral avanzada con Nginx, aislamiento en contenedores Docker y control estricto de accesos y cabeceras HTTPS.</p>
+                </div>
+                <div class="service-card glassmorphic">
+                    <div class="service-icon">📈</div>
+                    <h3>SRE y Observabilidad</h3>
+                    <p>Monitoreo proactivo mediante señales doradas (latencia, errores, saturación) para garantizar disponibilidad de nivel empresarial.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Interactive Stack Builder Section -->
+    <section id="builder" class="builder-section">
+        <div class="container">
+            <div class="section-header">
+                <h2 class="section-title">Constructor de Stack Interactivo</h2>
+                <p class="section-subtitle">Configura los componentes de tu proyecto y obtén una estimación de arquitectura recomendada.</p>
+            </div>
+            
+            <div class="builder-workspace glassmorphic">
+                <div class="builder-controls">
+                    <div class="control-group">
+                        <label for="platform-type">Tipo de Aplicación</label>
+                        <select id="platform-type" class="form-input">
+                            <option value="saas">SaaS / Plataforma Web</option>
+                            <option value="mobile">Aplicación Móvil Híbrida</option>
+                            <option value="api">API Core / Microservicios</option>
+                        </select>
+                    </div>
+
+                    <div class="control-group">
+                        <label for="frontend-tech">Tecnología Frontend</label>
+                        <select id="frontend-tech" class="form-input">
+                            <option value="vanilla">Vanilla HTML/CSS/JS (Cero Dependencias)</option>
+                            <option value="react">React / Next.js (SPA / SSR)</option>
+                            <option value="angular">Angular Enterprise (Estructurado)</option>
+                        </select>
+                    </div>
+
+                    <div class="control-group">
+                        <label for="backend-tech">Tecnología Backend</label>
+                        <select id="backend-tech" class="form-input">
+                            <option value="nodejs">TypeScript / Node.js (Express)</option>
+                            <option value="nestjs">NestJS (Arquitectura Modular)</option>
+                            <option value="python">Python (FastAPI / MLOps)</option>
+                        </select>
+                    </div>
+
+                    <div class="control-group">
+                        <label for="database-tech">Persistencia de Datos</label>
+                        <select id="database-tech" class="form-input">
+                            <option value="postgresql">PostgreSQL (Relacional / JSONB)</option>
+                            <option value="redis">Redis (Caché & Sesiones concurrentes)</option>
+                            <option value="mixed">Arquitectura Híbrida (PG + Redis)</option>
+                        </select>
+                    </div>
+
+                    <div class="control-group checkbox-group">
+                        <label>Características Adicionales</label>
+                        <div class="checkbox-options">
+                            <label class="checkbox-label">
+                                <input type="checkbox" id="feat-ssl" checked> Seguridad SSL/Nginx TLS
+                            </label>
+                            <label class="checkbox-label">
+                                <input type="checkbox" id="feat-backup" checked> Auto-Backups Docker
+                            </label>
+                            <label class="checkbox-label">
+                                <input type="checkbox" id="feat-monitoring"> Monitoreo Prometheus
+                            </label>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="builder-preview">
+                    <h3>Arquitectura Estimada</h3>
+                    <div class="preview-metrics">
+                        <div class="metric-box">
+                            <span class="metric-label">Complejidad</span>
+                            <span id="metric-complexity" class="metric-value">Media</span>
+                        </div>
+                        <div class="metric-box">
+                            <span class="metric-label">Tiempo Estimado</span>
+                            <span id="metric-timeline" class="metric-value">3-4 semanas</span>
+                        </div>
+                    </div>
+
+                    <div class="architecture-output">
+                        <h4>Recomendación Técnica:</h4>
+                        <div id="architecture-text" class="architecture-code font-mono">
+                            // Configurando arquitectura sugerida...
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- SRE Health & SLA Monitor Section -->
+    <section id="monitor" class="monitor-section">
+        <div class="container">
+            <div class="section-header">
+                <h2 class="section-title">Estado de SLAs y Salud de Ingeniería</h2>
+                <p class="section-subtitle">Simulador de métricas en tiempo real de los servicios web desplegados por Stackupia.</p>
+            </div>
+
+            <div class="monitor-grid">
+                <div class="monitor-card glassmorphic">
+                    <h4>Disponibilidad Global (Uptime)</h4>
+                    <div class="uptime-bar-container">
+                        <div class="uptime-percentage">99.998%</div>
+                        <div class="uptime-bars">
+                            <span class="bar success"></span>
+                            <span class="bar success"></span>
+                            <span class="bar success"></span>
+                            <span class="bar success"></span>
+                            <span class="bar success"></span>
+                            <span class="bar success"></span>
+                            <span class="bar success"></span>
+                            <span class="bar success"></span>
+                            <span class="bar success"></span>
+                            <span class="bar success"></span>
+                            <span class="bar success"></span>
+                            <span class="bar success"></span>
+                            <span class="bar success"></span>
+                            <span class="bar success"></span>
+                            <span class="bar success"></span>
+                        </div>
+                    </div>
+                    <p class="monitor-desc">Monitoreo continuo de latencia de Gateway y redundancia multi-región activa.</p>
+                </div>
+
+                <div class="monitor-card glassmorphic">
+                    <h4>Métricas de Calidad de Código</h4>
+                    <div class="gauge-container">
+                        <div class="gauge-box">
+                            <div class="gauge-value text-gradient">98%</div>
+                            <div class="gauge-title">Cobertura TDD</div>
+                        </div>
+                        <div class="gauge-box">
+                            <div class="gauge-value text-gradient">A+</div>
+                            <div class="gauge-title">Calidad de Código</div>
+                        </div>
+                    </div>
+                    <p class="monitor-desc">Restricción de complejidad ciclomática estricta y auditorías SAST (Trivy) integradas en CI/CD.</p>
+                </div>
+
+                <div class="monitor-card glassmorphic wide-card">
+                    <h4>Latencia de API Gateways (Tiempo Real)</h4>
+                    <div class="chart-container">
+                        <div id="live-chart" class="live-chart-visualization">
+                            <!-- Dynamically generated bars via JS -->
+                        </div>
+                        <div class="chart-labels">
+                            <span>Ahora</span>
+                            <span>P99: 45ms</span>
+                            <span>Promedio: 18ms</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Client Project Tracker Section -->
+    <section id="tracker" class="tracker-section">
+        <div class="container">
+            <div class="section-header">
+                <h2 class="section-title">Seguimiento de Proyectos en Tiempo Real</h2>
+                <p class="section-subtitle">Ingresa tu código de proyecto para ver el progreso actual y estado de la compilación.</p>
+            </div>
+
+            <div class="tracker-workspace glassmorphic">
+                <div class="tracker-input-area">
+                    <input type="text" id="project-code-input" class="form-input" placeholder="Ej: STK-998" value="STK-777">
+                    <button id="btn-track-project" class="btn btn-primary">Consultar Proyecto</button>
+                </div>
+
+                <div class="tracker-results" id="tracker-results-container">
+                    <div class="terminal-header">
+                        <span class="dot red"></span>
+                        <span class="dot yellow"></span>
+                        <span class="dot green"></span>
+                        <span class="terminal-title">stackupia-agent-terminal v1.1</span>
+                    </div>
+                    <div id="terminal-body" class="terminal-body font-mono">
+                        <p class="terminal-line text-muted">Esperando consulta de proyecto...</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Contact & Project Form Section -->
+    <section id="contacto" class="contact-section">
+        <div class="container contact-container">
+            <div class="contact-info-panel">
+                <h2>¿Listo para evaluar tu solución tecnológica?</h2>
+                <p>Completa el formulario para enviarnos los requerimientos de tu proyecto o solicitar una consultoría técnica.</p>
+                <div class="contact-details">
+                    <div class="contact-item">
+                        <span class="contact-icon">📧</span>
+                        <div>
+                            <h4>Contacto Directo</h4>
+                            <p>solutions@stackupia.com</p>
+                        </div>
+                    </div>
+                    <div class="contact-item">
+                        <span class="contact-icon">🌐</span>
+                        <div>
+                            <h4>Dominio Oficial</h4>
+                            <p>www.stackupia.com</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="contact-form-panel glassmorphic">
+                <h3>Formulario de Proyecto</h3>
+                <form id="project-submission-form" class="project-form">
+                    <div class="form-group">
+                        <label for="client-name">Nombre / Empresa</label>
+                        <input type="text" id="client-name" class="form-input" required placeholder="Ej: Juan Pérez / Startup Inc.">
+                    </div>
+                    <div class="form-group">
+                        <label for="client-email">Email Corporativo</label>
+                        <input type="email" id="client-email" class="form-input" required placeholder="juan@empresa.com">
+                    </div>
+                    <div class="form-group">
+                        <label for="project-description">Descripción de la Solución Tecnológica</label>
+                        <textarea id="project-description" class="form-input text-area" required placeholder="Describe brevemente la aplicación, arquitectura o problema técnico que deseas resolver..."></textarea>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="project-budget">Presupuesto Estimado ($)</label>
+                            <select id="project-budget" class="form-input">
+                                <option value="lite">&lt; $5,000</option>
+                                <option value="mid">$5,000 - $15,000</option>
+                                <option value="enterprise">&gt; $15,000</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="project-timeline">Plazo Deseado</label>
+                            <select id="project-timeline" class="form-input">
+                                <option value="fast">Urgente (&lt; 1 mes)</option>
+                                <option value="standard">Normal (1-3 meses)</option>
+                                <option value="flexible">Flexible</option>
+                            </select>
+                        </div>
+                    </div>
+                    <button type="submit" class="btn btn-primary btn-block">Enviar Solicitud de Evaluación</button>
+                    <div id="form-feedback" class="form-feedback-message"></div>
+                </form>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="main-footer">
+        <div class="container footer-container">
+            <p>&copy; 2026 Stackupia. Todos los derechos reservados. | Diseñado con Estándares de Arquitectura Premium.</p>
+            <p class="footer-version font-mono">v1.1.0-release</p>
+        </div>
+    </footer>
+
+    <!-- Scripts -->
+    <script type="module" src="app.js"></script>
+</body>
+</html>
