@@ -1,15 +1,17 @@
 /**
  * @file app.js
- * @description Lógica interactiva para el portal de Stackupia. Controla el Stack Builder, SLA Live Monitor, Terminal Project Tracker y validaciones.
+ * @description Lógica de integración del frontend de Stackupia con la API del Backend.
  * @author Gerardo Paiva G.
  * @date 18-07-2026
  * 
  * HISTORIAL DE CAMBIOS:
  * Version | Fecha      | Autor            | Descripción
- * V1.0.0  | 18-07-2026 | Gerardo Paiva G. | Implementación de simuladores dinámicos, constructor de arquitectura y terminal interactiva.
+ * V1.1.0  | 18-07-2026 | Gerardo Paiva G. | Conexión real con endpoints del backend Express para creación, consulta y telemetría.
  */
 
 document.addEventListener('DOMContentLoaded', () => {
+    const API_URL = 'http://localhost:3000/api';
+
     // ----------------------------------------------------
     // 1. Stack Builder Controller
     // ----------------------------------------------------
@@ -35,7 +37,6 @@ document.addEventListener('DOMContentLoaded', () => {
         let timeline = '2-3 semanas';
         let architectureCode = '';
 
-        // Calculate Complexity and Timeline based on inputs
         if (platform === 'api') {
             complexity = 'Alta';
             timeline = '5-6 semanas';
@@ -49,7 +50,6 @@ document.addEventListener('DOMContentLoaded', () => {
             if (timeline === '4-5 semanas') timeline = '5-6 semanas';
         }
 
-        // Generate dynamic technical recommendation text
         architectureCode = `// --- ARQUITECTURA GENERAL SUGERIDA (STACKUPIA) ---\n`;
         architectureCode += `const Solution = {\n`;
         architectureCode += `  pattern: "Arquitectura Hexagonal (Clean)",\n`;
@@ -69,7 +69,6 @@ document.addEventListener('DOMContentLoaded', () => {
         timelineVal.textContent = timeline;
         architectureText.textContent = architectureCode;
 
-        // Apply accent color depending on complexity
         if (complexity === 'Alta') {
             complexityVal.style.color = 'var(--color-error)';
         } else if (complexity === 'Media') {
@@ -79,19 +78,17 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
-    // Set up listeners for Builder
     [platformSelect, frontendSelect, backendSelect, databaseSelect, sslCheck, backupCheck, monitorCheck].forEach(element => {
         if (element) {
             element.addEventListener('change', updateStackMetrics);
         }
     });
 
-    // Initial trigger
     updateStackMetrics();
 
 
     // ----------------------------------------------------
-    // 2. SRE Live SLA Monitor (API Latency simulator)
+    // 2. SRE Live SLA Monitor (API Real Telemetry with simulator fallback)
     // ----------------------------------------------------
     const liveChart = document.getElementById('live-chart');
     const maxBars = 25;
@@ -103,103 +100,167 @@ document.addEventListener('DOMContentLoaded', () => {
         latencies.forEach(lat => {
             const bar = document.createElement('div');
             bar.className = 'chart-bar';
-            // Scale bar height to visual container
             bar.style.height = `${Math.min(lat * 2, 110)}px`;
             bar.setAttribute('title', `${lat}ms`);
             liveChart.appendChild(bar);
         });
     }
 
-    function simulateLatency() {
-        // Drop oldest value, add new simulated latency between 8ms and 65ms
+    async function updateSreMetrics() {
+        try {
+            const response = await fetch(`${API_URL}/sre/metrics`);
+            if (response.ok) {
+                const metrics = await response.json();
+                document.querySelector('.uptime-percentage').textContent = `${metrics.uptime}%`;
+                // Add new real latency value to graph
+                latencies.shift();
+                latencies.push(metrics.averageLatencyMs + Math.floor(Math.random() * 8));
+                renderChart();
+            } else {
+                simulateLatencyFallback();
+            }
+        } catch (err) {
+            simulateLatencyFallback();
+        }
+    }
+
+    function simulateLatencyFallback() {
         latencies.shift();
-        const spikeChance = Math.random() > 0.9; // 10% chance of high latency spike
+        const spikeChance = Math.random() > 0.9;
         const newLatency = spikeChance ? Math.floor(Math.random() * 40) + 40 : Math.floor(Math.random() * 15) + 10;
         latencies.push(newLatency);
         renderChart();
     }
 
-    // Initialize and run interval
     renderChart();
-    setInterval(simulateLatency, 2500);
+    setInterval(updateSreMetrics, 2500);
 
 
     // ----------------------------------------------------
-    // 3. Client Project Tracker Terminal
+    // 3. Client Project Tracker Terminal (Real API)
     // ----------------------------------------------------
     const trackBtn = document.getElementById('btn-track-project');
     const projectInput = document.getElementById('project-code-input');
     const terminalBody = document.getElementById('terminal-body');
 
     if (trackBtn && projectInput && terminalBody) {
-        trackBtn.addEventListener('click', () => {
+        trackBtn.addEventListener('click', async () => {
             const projectCode = projectInput.value.trim().toUpperCase();
             
-            terminalBody.innerHTML = `<p class="terminal-line text-accent">&gt; Resolviendo metadatos para el proyecto ${projectCode}...</p>`;
+            terminalBody.innerHTML = `<p class="terminal-line text-accent">&gt; Consultando API de tracking para ${projectCode}...</p>`;
             
-            setTimeout(() => {
+            try {
+                const response = await fetch(`${API_URL}/projects/${projectCode}`);
+                if (response.ok) {
+                    const project = await response.json();
+                    terminalBody.innerHTML = `
+                        <p class="terminal-line text-accent">&gt; Proyecto localizado en base de datos PostgreSQL.</p>
+                        <p class="terminal-line text-muted">[INFO] ID: ${project.id}</p>
+                        <p class="terminal-line text-muted">[INFO] Cliente: ${project.clientName}</p>
+                        <p class="terminal-line text-muted">[INFO] Email: ${project.clientEmail}</p>
+                        <p class="terminal-line text-success">[OK] Fase activa de Roadmap: ${project.status}</p>
+                        <p class="terminal-line text-success">[OK] Registrado en: ${new Date(project.createdAt).toLocaleString()}</p>
+                        <p class="terminal-line text-accent">&gt;&gt;&gt; ESTADO DEL PROYECTO: ACTIVO (PROCESANDO)</p>
+                    `;
+                } else if (response.status === 404) {
+                    /* Fallback para códigos fijos de demostración local offline */
+                    if (projectCode === 'STK-777') {
+                        terminalBody.innerHTML = `
+                            <p class="terminal-line text-accent">&gt; Conexión establecida con Gateway local...</p>
+                            <p class="terminal-line text-success">[OK] 42 tests completados con éxito (100% de éxito)</p>
+                            <p class="terminal-line text-success">[OK] Cobertura de código: 98.4%</p>
+                            <p class="terminal-line text-muted">[INFO] Container 'stackupia-postgres' - STATUS: HEALTHY</p>
+                            <p class="terminal-line text-success">&gt;&gt;&gt; ESTADO DEL PROYECTO: LISTO PARA PRODUCCIÓN (FASE 4 COMPLETADA)</p>
+                        `;
+                    } else {
+                        terminalBody.innerHTML = `
+                            <p class="terminal-line text-error">[ERR] Proyecto ${projectCode} no registrado o inactivo en la base de datos.</p>
+                            <p class="terminal-line text-muted">[SUGERENCIA] Registra un nuevo proyecto en el formulario inferior para generar un código válido.</p>
+                        `;
+                    }
+                } else {
+                    throw new Error('Fallo al obtener respuesta de la API.');
+                }
+            } catch (err) {
+                /* Resiliencia: Fallback offline si el backend está apagado */
                 if (projectCode === 'STK-777') {
                     terminalBody.innerHTML = `
-                        <p class="terminal-line text-accent">&gt; Iniciando conexión con Gateway local...</p>
-                        <p class="terminal-line text-muted">[INFO] Conectado exitosamente al nodo: global-node-01</p>
-                        <p class="terminal-line text-accent">&gt; Ejecutando suite de pruebas unitarias TDD...</p>
+                        <p class="terminal-line text-accent">&gt; Conexión establecida con Gateway local (Mock Mode)...</p>
                         <p class="terminal-line text-success">[OK] 42 tests completados con éxito (100% de éxito)</p>
                         <p class="terminal-line text-success">[OK] Cobertura de código: 98.4%</p>
-                        <p class="terminal-line text-accent">&gt; Verificando contenedores activos (Docker Compose)...</p>
                         <p class="terminal-line text-muted">[INFO] Container 'stackupia-postgres' - STATUS: HEALTHY</p>
-                        <p class="terminal-line text-muted">[INFO] Container 'stackupia-nginx' - STATUS: ONLINE (Port 80/443)</p>
-                        <p class="terminal-line text-success">&gt;&gt;&gt; ESTADO DEL PROYECTO: LISTO PARA PRODUCCIÓN (FASE 4 COMPLETADA)</p>
-                    `;
-                } else if (projectCode.startsWith('STK-')) {
-                    terminalBody.innerHTML = `
-                        <p class="terminal-line text-accent">&gt; Consultando base de datos corporativa...</p>
-                        <p class="terminal-line text-muted">[INFO] Proyecto localizado: ${projectCode}</p>
-                        <p class="terminal-line text-accent">&gt; Analizando estado del repositorio Git...</p>
-                        <p class="terminal-line text-success">[OK] Rama activa: support/v1.x</p>
-                        <p class="terminal-line text-muted">[INFO] Fase actual: Fase 3 (Desarrollo Core & Reflexión)</p>
-                        <p class="terminal-line text-muted">[INFO] 2 dependencias vulnerables identificadas por Trivy (SAST)</p>
-                        <p class="terminal-line text-error">[WARN] Lint: Encontradas advertencias en el linter de estilos.</p>
-                        <p class="terminal-line text-accent">&gt;&gt;&gt; ESTADO DEL PROYECTO: EN DESARROLLO (FASE 3)</p>
+                        <p class="terminal-line text-success">&gt;&gt;&gt; ESTADO DEL PROYECTO: LISTO PARA PRODUCCIÓN (FASE 4 MOCK)</p>
                     `;
                 } else {
                     terminalBody.innerHTML = `
-                        <p class="terminal-line text-accent">&gt; Consultando base de datos corporativa...</p>
-                        <p class="terminal-line text-error">[ERR] Proyecto ${projectCode} no registrado o inactivo.</p>
-                        <p class="terminal-line text-muted">[INFO] Por favor, verifica el código suministrado o contáctanos directamente para validarlo.</p>
+                        <p class="terminal-line text-error">[WARN] Backend desconectado. Servidor API no disponible temporalmente.</p>
+                        <p class="terminal-line text-muted">[INFO] Código consultado: ${projectCode} (Ejecutando en modo desconectado).</p>
                     `;
                 }
-            }, 1000);
+            }
         });
     }
 
 
     // ----------------------------------------------------
-    // 4. Project Form Submission & Solution Evaluator
+    // 4. Project Form Submission & Real Solution API
     // ----------------------------------------------------
     const projectForm = document.getElementById('project-submission-form');
     const formFeedback = document.getElementById('form-feedback');
 
     if (projectForm && formFeedback) {
-        projectForm.addEventListener('submit', (e) => {
+        projectForm.addEventListener('submit', async (e) => {
             e.preventDefault();
 
             const clientName = document.getElementById('client-name').value;
             const clientEmail = document.getElementById('client-email').value;
+            const projectDescription = document.getElementById('project-description').value;
+            const budgetType = document.getElementById('project-budget').value;
+            const timelineType = document.getElementById('project-timeline').value;
 
-            // Simple visual loading
             formFeedback.style.display = 'block';
             formFeedback.className = 'form-feedback-message';
-            formFeedback.textContent = 'Enviando requerimientos a la mesa de arquitectura de Stackupia...';
+            formFeedback.textContent = 'Enviando requerimientos a la API de Stackupia...';
 
-            setTimeout(() => {
+            try {
+                const response = await fetch(`${API_URL}/projects`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        clientName,
+                        clientEmail,
+                        projectDescription,
+                        budgetType,
+                        timelineType
+                    })
+                });
+
+                if (response.ok) {
+                    const project = await response.json();
+                    formFeedback.className = 'form-feedback-message success';
+                    formFeedback.innerHTML = `
+                        <strong>¡Proyecto Registrado Exitosamente!</strong><br>
+                        Se ha asignado el código de seguimiento: <strong class="text-gradient">${project.projectCode}</strong>.<br>
+                        Guarda este código para consultar el avance del desarrollo en el buscador superior.
+                    `;
+                    projectForm.reset();
+                } else {
+                    const errData = await response.json();
+                    throw new Error(errData.error || 'Error en el registro del proyecto.');
+                }
+            } catch (err) {
+                /* Fallback de respaldo local si el backend no responde */
                 formFeedback.className = 'form-feedback-message success';
+                const mockCode = `STK-${Math.floor(100 + Math.random() * 900)}`;
                 formFeedback.innerHTML = `
-                    <strong>¡Solicitud Recibida con Éxito!</strong><br>
-                    Gracias ${clientName}. Hemos registrado tu solicitud bajo el correo <strong>${clientEmail}</strong>. 
-                    Un Ingeniero de Soluciones evaluará tu propuesta en menos de 24 horas.
+                    <strong>[MOCK MODE] Solicitud Registrada de Respaldo</strong><br>
+                    (El backend local está desconectado). Hemos procesado localmente tu propuesta de soluciones.<br>
+                    Tu código simulado es: <strong>${mockCode}</strong>
                 `;
                 projectForm.reset();
-            }, 1500);
+            }
         });
     }
 });
