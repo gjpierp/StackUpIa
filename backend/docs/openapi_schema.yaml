@@ -1,0 +1,164 @@
+# =====================================================================
+# @file openapi_schema.yaml
+# @description Especificación OpenAPI 3.0.0 para los endpoints del portal de Stackupia.
+# @author Gerardo Paiva G.
+# @date 18-07-2026
+# 
+# HISTORIAL DE CAMBIOS:
+# Version | Fecha      | Autor            | Descripción
+# V1.0.0  | 18-07-2026 | Gerardo Paiva G. | Definición de contratos para proyectos, tracking y telemetría SRE.
+# =====================================================================
+
+openapi: 3.0.0
+info:
+  title: Stackupia API
+  description: API Corporativa para la recepción, evaluación y telemetría de soluciones tecnológicas.
+  version: 1.0.0
+servers:
+  - url: http://localhost:3000/api
+    description: Servidor de Desarrollo Local
+
+paths:
+  /projects:
+    post:
+      summary: Registrar una propuesta de solución tecnológica
+      description: Permite a los prospectos o clientes enviar requerimientos de desarrollo de software para evaluación.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateProjectRequest'
+      responses:
+        '201':
+          description: Proyecto registrado para evaluación con éxito.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProjectResponse'
+        '400':
+          description: Requerimientos o parámetros de entrada inválidos.
+
+  /projects/{code}:
+    get:
+      summary: Consultar el estado del desarrollo de un proyecto
+      description: Retorna el avance del proyecto a través de las fases operacionales.
+      parameters:
+        - name: code
+          in: path
+          required: true
+          description: Código único de proyecto asignado (Ej. STK-777)
+          schema:
+            type: string
+            pattern: '^STK-[0-9]{3}$'
+      responses:
+        '200':
+          description: Estado del proyecto consultado con éxito.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProjectResponse'
+        '404':
+          description: Proyecto no localizado en el registro.
+
+  /sre/metrics:
+    get:
+      summary: Consultar métricas en tiempo real de SLAs y salud de ingeniería
+      description: Retorna latencias, tasa de tests y disponibilidad.
+      responses:
+        '200':
+          description: Métricas obtenidas.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SreMetricsResponse'
+
+components:
+  schemas:
+    CreateProjectRequest:
+      type: object
+      required:
+        - clientName
+        - clientEmail
+        - projectDescription
+      properties:
+        clientName:
+          type: string
+          minLength: 3
+          maxLength: 100
+          example: Juan Pérez / Startup Inc.
+        clientEmail:
+          type: string
+          format: email
+          example: juan@empresa.com
+        projectDescription:
+          type: string
+          minLength: 10
+          maxLength: 2000
+          example: Desarrollo de un SaaS para control de stock con Postgres.
+        budgetType:
+          type: string
+          enum: [lite, mid, enterprise]
+          default: lite
+          example: mid
+        timelineType:
+          type: string
+          enum: [fast, standard, flexible]
+          default: standard
+          example: standard
+
+    ProjectResponse:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+          example: 9b1deb4d-3b7d-4bad-9bdd-2b0d7b3dcb6d
+        projectCode:
+          type: string
+          example: STK-777
+        clientName:
+          type: string
+          example: Juan Pérez / Startup Inc.
+        clientEmail:
+          type: string
+          example: juan@empresa.com
+        projectDescription:
+          type: string
+          example: Desarrollo de un SaaS para control de stock con Postgres.
+        budgetType:
+          type: string
+          example: mid
+        timelineType:
+          type: string
+          example: standard
+        status:
+          type: string
+          enum: [FASE_0, FASE_1, FASE_2, FASE_3, FASE_4, FASE_5]
+          example: FASE_1
+        createdAt:
+          type: string
+          format: date-time
+          example: '2026-07-18T19:00:00Z'
+
+    SreMetricsResponse:
+      type: object
+      properties:
+        uptime:
+          type: number
+          example: 99.998
+        tddCoverage:
+          type: number
+          example: 98.4
+        codeQuality:
+          type: string
+          example: A+
+        latencyP99Ms:
+          type: number
+          example: 45
+        averageLatencyMs:
+          type: number
+          example: 18
+        activeContainers:
+          type: integer
+          example: 3

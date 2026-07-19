@@ -2,8 +2,8 @@
 
 Hoja de ruta del proyecto Stackupia, dividida en fases secuenciales que aseguran el cumplimiento del Stage-Gate Workflow.
 
-## Estado del Proyecto: `[████░░░░░░] 40%`
-- **Fase Actual:** Fase 1: Arquitectura y Estructura de Red 🟢 (Completado)
+## Estado del Proyecto: `[██████░░░░] 60%`
+- **Fase Actual:** Fase 2: API-First y Contratos 🟢 (Completado)
 
 ---
 
@@ -21,9 +21,9 @@ Hoja de ruta del proyecto Stackupia, dividida en fases secuenciales que aseguran
 - [x] Configuración de la persistencia de base de datos PostgreSQL mediante Docker Compose con auto-backups.
 - [x] Creación de scripts iniciales de migración de base de datos (Flyway).
 
-### 🔴 Fase 2: API-First y Contratos
-- [ ] Diseño y validación del contrato OpenAPI 3.0 para la API del dashboard.
-- [ ] Definición de modelos, DTOs y puertos del backend.
+### 🟢 Fase 2: API-First y Contratos
+- [x] Diseño y validación del contrato OpenAPI 3.0 para la API del dashboard.
+- [x] Definición de modelos, DTOs y puertos del backend.
 
 ### 🔴 Fase 3: Core Dev y Reflexión
 - [ ] Implementación de casos de uso y lógica de negocio mediante TDD.
